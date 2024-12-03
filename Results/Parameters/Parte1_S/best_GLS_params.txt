@@ -1,0 +1,3 @@
+{
+    "regularizacion": 31
+}

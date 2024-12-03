@@ -1,0 +1,4 @@
+{
+    "TabuSize": 78,
+    "ErrorTolerance": 0.005888820294791645
+}
