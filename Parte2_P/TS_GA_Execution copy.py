@@ -2,6 +2,7 @@
 import sys
 import os
 import json
+import numpy as np
 
 ########## Globals ##########
 """
@@ -14,19 +15,18 @@ import json
         the objective function is called.
 """
 Path_Instances = "Instances/Experimental"
-Path_Params = 'Results/Parametrization/best_GAc_PMX_swaping_params.txt'
+Path_Params = 'C:/Users/benja/OneDrive/Escritorio/WorkSpace/Metaheuristicas_final/Results/Parameters/Parte2_P/best_GAe_PBX_scramble_params.txt'
 Path_OPT = "Optimals/Experimental/Optimals.txt"
 output_directory = 'Results/Experimentals'
 
 
 ########## Own files ##########
 # Path from the workspace.
-sys.path.append(os.path.join(os.path.dirname(__file__), 'Libraries'))
+sys.path.append("C:/Users/benja/OneDrive/Escritorio/WorkSpace/Metaheuristicas_final/Libraries")
 from ReadTSP import ReadTsp # type: ignore
 from ReadTSP import ReadTSP_optTour # type: ignore
 from TabuSearch import ObjFun  # type: ignore
 from TabuSearch import TabuSearch  # type: ignore
-from TabuSearch import TabuSearch_Con  # type: ignore
 from GeneticAlgorithm_classic import GAc_PMX_swap # type: ignore
 from GeneticAlgorithm_classic import GAc_OX_invertion # type: ignore
 from GeneticAlgorithm_classic import GAc_PBX_scramble # type: ignore
@@ -80,6 +80,73 @@ def write_results(file_path, results):
             obj_value, error = result
             file.write(f"Objective Value: {obj_value}, Error: {error}\n")
 
+def kendall_tau_distance(pi1, pi2):
+    """
+    Calcula la distancia de Kendall Tau entre dos permutaciones,
+    ignorando pares iguales pero invertidos.
+
+    Args:
+        pi1 (np.array): Primera permutación (arreglo de enteros).
+        pi2 (np.array): Segunda permutación (arreglo de enteros).
+
+    Returns:
+        int: Número de inversiones o distancia de Kendall Tau.
+    """
+    # Asegurarse de que las permutaciones tengan la misma longitud
+    if len(pi1) != len(pi2):
+        raise ValueError("Las permutaciones deben tener la misma longitud.")
+    
+    n = len(pi1)
+    
+    # Crear un diccionario de posiciones de los elementos en pi2
+    pos_in_pi2 = {value: index for index, value in enumerate(pi2)}
+    
+    # Convertir pi1 a los índices de pi2
+    pi1_indices_in_pi2 = [pos_in_pi2[value] for value in pi1]
+
+    # Contar el número de inversiones (pares invertidos)
+    inversions = 0
+    for i in range(n):
+        for j in range(i + 1, n):
+            # Verificar si hay inversión y que los elementos no sean iguales
+            if (pi1_indices_in_pi2[i] > pi1_indices_in_pi2[j] and
+                pi1[i] != pi1[j]):
+                inversions += 1
+
+    return inversions
+
+
+def kendall_tau_statistics(permutations):
+    """
+    Calcula la media, mediana y desviación estándar de las distancias de Kendall
+    entre cada par de permutaciones en una lista de permutaciones.
+
+    Args:
+        permutations (list of np.array): Lista de permutaciones.
+
+    Returns:
+        dict: Diccionario con la media, mediana y desviación estándar de las distancias de Kendall.
+    """
+    n = len(permutations)
+    distances = []
+
+    # Comparar cada par de permutaciones
+    for i in range(n):
+        for j in range(i + 1, n):
+            dist = kendall_tau_distance(permutations[i], permutations[j])
+            distances.append(dist)
+    
+    # Calcular media, mediana y desviación estándar
+    mean_distance = np.mean(distances)
+    median_distance = np.median(distances)
+    std_dev_distance = np.std(distances)
+
+    return {
+        'mean': mean_distance,
+        'median': median_distance,
+        'std_dev': std_dev_distance
+    }
+
 ########## Procedure ##########
 
 # Obtain TSP's instances.
@@ -104,30 +171,34 @@ n = len(Instances)
 results = []
 #for Instance, opt_value in zip(Instances, Opt_Instances):
 
-for i in range(11):
-        result, _ = GAc_PMX_swap(best_params['POP_SIZE'], 
-                                      Instances[2], 
-                                      len(Instances[2]),
+for i in range(1):
+        result, Generations = GAe_OX_invertion(best_params['POP_SIZE'], 
+                                      Instances[0], 
+                                      len(Instances[0]),
                                       80000,
-                                      best_params['T_SIZE'],
                                       best_params['C_RATE'], 
                                       best_params['M_RATE'])
         
+        print("iteración número: {}".format(i+1))
+        for j in range(200):
+            print(kendall_tau_statistics(result[j]))
         # Calcular el valor de la función objetivo para la solución obtenida
         #obj_value = ObjFun(result, Instances[1])
 
         # Calcular el error respecto al valor óptimo
         #error = (obj_value - Opt_Instances[0]) / Opt_Instances[0]
         #error = (obj_value - Opt_Instances[1]) / Opt_Instances[1]
-        error = (result[1] - Opt_Instances[2]) / Opt_Instances[2]
+        #error = (result[1] - Opt_Instances[2]) / Opt_Instances[2]
         
         # Guardar el resultado y el error
         #results.append((obj_value, error))
-        results.append((result[1], error))
+        #results.append((result[1], error))
         
         # Imprimir el valor de la función objetivo para la solución obtenida.
         #print(f"Objective Value: {obj_value}, Error: {error}")
-        print(f"Objective Value: {result[1]}, Error: {error}")
+        #print(f"Objective Value: {result[1]}, Error: {error}")
+
+
 
 # Escribir los resultados en un archivo
-write_results(results_file_path, results)
+#write_results(results_file_path, results)

@@ -14,25 +14,18 @@ import json
         the objective function is called.
 """
 Path_Instances = "Instances/Experimental"
-Path_Params = 'C:/Users/benja/OneDrive/Escritorio/WorkSpace/Metaheuristicas_final/Results/Parameters/Parte2_P/best_GAe_OX_invertion_params.txt'
+Path_Params = 'Results/Parametrization/best_GAc_PBX_scramble_params.txt'
 Path_OPT = "Optimals/Experimental/Optimals.txt"
-output_directory = 'C:/Users/benja/OneDrive/Escritorio/WorkSpace/Metaheuristicas_final/Results/Experimentals/Parte2'
+output_directory = 'Results/Experimentals'
 
 
 ########## Own files ##########
 # Path from the workspace.
-sys.path.append("C:/Users/benja/OneDrive/Escritorio/WorkSpace/Metaheuristicas_final/Libraries")
+sys.path.append(os.path.join(os.path.dirname(__file__), 'Libraries'))
 from ReadTSP import ReadTsp # type: ignore
 from ReadTSP import ReadTSP_optTour # type: ignore
-from TabuSearch import ObjFun  # type: ignore
-from TabuSearch import TabuSearch  # type: ignore
-
-from GeneticAlgorithm_classic import GAc_PMX_swap # type: ignore
-from GeneticAlgorithm_classic import GAc_OX_invertion # type: ignore
-from GeneticAlgorithm_classic import GAc_PBX_scramble # type: ignore
-from GeneticAlgorithm_C9 import GAe_PMX_swap # type: ignore
-from GeneticAlgorithm_C9 import GAe_OX_invertion # type: ignore
-from GeneticAlgorithm_C9 import GAe_PBX_scramble # type: ignore
+from HybridGA import GAc_Hybrid_ini # type: ignore
+from HybridGA import GAc_Hybrid_end # type: ignore
 
 ########## Secundary functions ##########
 
@@ -96,8 +89,8 @@ Instances, Opt_Instances = Read_Content(files_Instances, Path_OPT)
 # Params.
 #best_params = load_best_params(Path_Params)
 #results_file_path = output_directory + '/genetic_algorithm_results_318_4000000.txt'
-best_params = load_best_params(Path_Params)
-results_file_path = output_directory + '/GAc_OX_inv_results_194_80000.txt'
+#best_params = load_best_params(Path_Params)
+#results_file_path = output_directory + '/GAc_PBX_scr_results_194_80000.txt'
 
 # Using best parameters to obtain solutions.
 n = len(Instances)
@@ -105,12 +98,15 @@ results = []
 #for Instance, opt_value in zip(Instances, Opt_Instances):
 
 for i in range(11):
-        _, result = GAe_OX_invertion(best_params['POP_SIZE'], 
-                                      Instances[2], 
-                                      len(Instances[2]),
-                                      80000,
-                                      best_params['C_RATE'], 
-                                      best_params['M_RATE'])
+        result, _ = GAc_Hybrid_end(100, 
+                                    Instances[2], 
+                                    len(Instances[2]),
+                                    80000,
+                                    6,
+                                    80, 
+                                    10,
+                                    0.5,
+                                    20000)
         
         # Calcular el valor de la función objetivo para la solución obtenida
         #obj_value = ObjFun(result, Instances[1])
@@ -129,4 +125,4 @@ for i in range(11):
         print(f"Objective Value: {result[1]}, Error: {error}")
 
 # Escribir los resultados en un archivo
-write_results(results_file_path, results)
+#write_results(results_file_path, results)

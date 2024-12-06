@@ -3,14 +3,14 @@ library(ggplot2)
 library(dplyr)
 
 ################ WorkSpaces.
-setwd("C:/Users/benja/OneDrive/Escritorio/WorkSpace/TSP_SvsP/Results/Experimentals")
+setwd("C:/Users/benja/OneDrive/Escritorio/WorkSpace/Metaheuristicas_final/Results/Experimentals/Parte2_P")
 
 ################
 # Convergencia.
 ################
 
 Converge_SA <- read.csv("TS_converge_38.csv")
-Converge_GA <- read.csv("GAcPBXscr_converge_38.csv")
+Converge_GA <- read.csv("GAcOXin_converge_38.csv")
 
 ################
 # Resultados.
@@ -108,3 +108,7 @@ wilcox.test(Caso_GA_1$Error, Caso_TS_1$Error, paired = TRUE, alternative = "less
 t.test(Caso_GA_2$Error, Caso_TS_2$Error, paired = TRUE)
 t.test(Caso_GA_3$Error, Caso_TS_2$Error, paired = TRUE)
 t.test(Caso_GA_4$Error, Caso_TS_2$Error, paired = TRUE)
+
+################
+# Variabilidad.
+################

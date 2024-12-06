@@ -24,7 +24,6 @@ output_directory = 'Results/Experimentals'
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Libraries'))
 from ReadTSP import ReadTsp # type: ignore
 from ReadTSP import ReadTSP_optTour # type: ignore
-from TabuSearch import TabuSearch_Con  # type: ignore
 from TabuSearch import ObjFun  # type: ignore
 from GeneticAlgorithm_classic import GAc_PMX_swap # type: ignore
 from GeneticAlgorithm_classic import GAc_OX_invertion # type: ignore
@@ -171,7 +170,7 @@ results = []
                     TabuSize=best_params['TabuSize'],
                     minErrorInten=best_params["ErrorTolerance"])"""
 
-rr , result  = GAc_PBX_scramble(best_params['POP_SIZE'], 
+rr , result  = GAc_OX_invertion(best_params['POP_SIZE'], 
                         Instances[0], 
                         len(Instances[0]),
                         80000,

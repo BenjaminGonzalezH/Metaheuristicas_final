@@ -121,8 +121,8 @@ def GAe_OX_invertion(Pop_size, DistanceMatrix, AmountNodes,
                     child1, child2 = GAoperators.OX(parent1[0], parent2[0])
 
                     # Mutation
-                    m_child1 = GAoperators.scramble_mutation(child1, Mutation_rate)
-                    m_child2 = GAoperators.scramble_mutation(child2, Mutation_rate)
+                    m_child1 = GAoperators.inversion_mutation(child1, Mutation_rate)
+                    m_child2 = GAoperators.inversion_mutation(child2, Mutation_rate)
 
                     # Evaluation.
                     m_child1 = (m_child1, ObjFun(m_child1, DistanceMatrix))
