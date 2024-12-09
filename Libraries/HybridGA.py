@@ -11,20 +11,32 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'Libraries'))
 import GAoperators
 from TabuSearch import ObjFun
 from GLS import Guided_Local_Search_H
-from GLS import Guided_Local_Search_Hend
+from GLS import get_neighbors_2opt
+from GLS import best_neighbor
 
-###### LS init #####
-def GAc_Hybrid_ini(Pop_size, DistanceMatrix, AmountNodes,
+###### LS classic #####
+
+def GAc_Hybrid(Pop_size, DistanceMatrix, AmountNodes,
                      MaxOfCalls, tournament_size,
-                     Crossover_rate, Mutation_rate, alpha, CallsGA):
+                     Crossover_rate, Mutation_rate, 
+                     alpha, CallsGA, elitist):
     
-    # Inicialización y evaluación de la población
-    reference_solution = Guided_Local_Search_H(DistanceMatrix, AmountNodes, 
-                                             CallsGA, alpha)
-    pop = []
-    pop.append(reference_solution[-1])
-    for _ in range(Pop_size-1):
-        pop.append(np.random.permutation(pop[0]))
+    num_elitists = int(Pop_size * elitist)
+
+    # Generar las soluciones elitistas basadas en GLS
+    reference_solution = Guided_Local_Search_H(DistanceMatrix, AmountNodes, CallsGA, alpha)
+    pop = [GAoperators.scramble_mutation(reference_solution[-1], 100) for _ in range(num_elitists)]
+    pop[0] = reference_solution[-1]
+
+    # Generar el resto de las soluciones aleatorias
+    random_solutions = [
+        np.random.permutation(reference_solution[-1]) for _ in range(Pop_size - num_elitists)
+    ]
+
+    # Combinar ambas partes de la población
+    pop = pop + random_solutions
+
+    # Evaluar la población inicial
     pop_eval = GAoperators.Evaluate(pop, DistanceMatrix)
 
     # Registro de las generaciones y la mejor solución
@@ -82,16 +94,31 @@ def GAc_Hybrid_ini(Pop_size, DistanceMatrix, AmountNodes,
 
     return Best, Generations
 
-def GAc_Hybrid_end(Pop_size, DistanceMatrix, AmountNodes,
+
+def GAc_Hybrid_1(Pop_size, DistanceMatrix, AmountNodes,
                      MaxOfCalls, tournament_size,
-                     Crossover_rate, Mutation_rate, alpha, CallsGA):
+                     Crossover_rate, Mutation_rate):
     
-    # Inicialización y evaluación de la población
-    pop = GAoperators.initialize_population(Pop_size, AmountNodes)
+    calls = 0
+
+    # Generar las soluciones elitistas basadas en GLS
+    pop = [GAoperators.first_solution(AmountNodes) for _ in range(Pop_size)]
+    for i in range(len(pop)):
+        cost = ObjFun(pop[i], DistanceMatrix)
+        calls += 1
+        vecinos = get_neighbors_2opt(pop[i],DistanceMatrix)
+        for vecino in vecinos:
+            cost_vecino = ObjFun(vecino, DistanceMatrix)
+            calls += 1
+            if(cost_vecino < cost):
+                pop[i] = vecino
+                break
+
+    # Evaluar la población inicial
     pop_eval = GAoperators.Evaluate(pop, DistanceMatrix)
 
     # Registro de las generaciones y la mejor solución
-    calls = CallsGA + Pop_size
+    calls += Pop_size + (AmountNodes*(AmountNodes-1)//2)
     Generations = []
     Generations.append(pop_eval)
     Best = min(pop_eval, key=lambda x: x[1])
@@ -143,7 +170,11 @@ def GAc_Hybrid_end(Pop_size, DistanceMatrix, AmountNodes,
         # Registrar las generaciones
         Generations.append(pop_eval)
 
-    reference_solution = Guided_Local_Search_Hend(DistanceMatrix, AmountNodes,
-                                     Best[0], CallsGA, alpha)
+    vecinos_final = get_neighbors_2opt(Best[0], DistanceMatrix)
+    for vecino in vecinos_final:
+        cost = ObjFun(vecino, DistanceMatrix)
+        if(cost < Best[1]):
+            Best = (vecino, cost)
 
-    return (reference_solution[-1], ObjFun(reference_solution[-1], DistanceMatrix)), Generations
+    return Best, Generations
+

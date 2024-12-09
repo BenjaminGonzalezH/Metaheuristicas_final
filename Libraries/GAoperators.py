@@ -268,7 +268,7 @@ def inversion_mutation(chromosome, mutation_rate):
         # Seleccionar dos posiciones aleatorias
         start, end = sorted(random.sample(range(len(chromosome)), 2))
         # Invertir el segmento
-        chromosome[start:end] = reversed(chromosome[start:end])
+        chromosome[start:end] = list(reversed(chromosome[start:end]))
     return chromosome
 
 def scramble_mutation(chromosome, mutation_rate):

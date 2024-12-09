@@ -4,7 +4,7 @@ library(dplyr)
 
 ############ Archivos ############
 # Leer el archivo CSV y preparar los datos
-setwd("C:/Users/benja/OneDrive/Escritorio/WorkSpace/Metaheuristica-TSP/Results/Experimentals")
+setwd("C:/Users/Benjamin Gonzalez/Desktop/Workspace/Metaheuristicas_final/Results/Experimentals/Parte1_S")
 df_C_TS <- read.csv("TS_converge_38.csv")
 df_C_GLS <- read.csv("GLS_converge_38.csv")
 

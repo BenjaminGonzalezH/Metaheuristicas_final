@@ -14,7 +14,7 @@ import json
         the objective function is called.
 """
 Path_Instances = "Instances/Experimental"
-Path_Params = 'Results/Parametrization/best_GAc_PBX_scramble_params.txt'
+Path_Params = 'Results/Parameters/Parte2_P/best_HGAc_ini_params.txt'
 Path_OPT = "Optimals/Experimental/Optimals.txt"
 output_directory = 'Results/Experimentals'
 
@@ -24,8 +24,8 @@ output_directory = 'Results/Experimentals'
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Libraries'))
 from ReadTSP import ReadTsp # type: ignore
 from ReadTSP import ReadTSP_optTour # type: ignore
-from HybridGA import GAc_Hybrid_ini # type: ignore
-from HybridGA import GAc_Hybrid_end # type: ignore
+from HybridGA import GAc_Hybrid # type: ignore
+from HybridGA import GAc_Hybrid_1 # type: ignore
 
 ########## Secundary functions ##########
 
@@ -88,25 +88,25 @@ Instances, Opt_Instances = Read_Content(files_Instances, Path_OPT)
 
 # Params.
 #best_params = load_best_params(Path_Params)
-#results_file_path = output_directory + '/genetic_algorithm_results_318_4000000.txt'
-#best_params = load_best_params(Path_Params)
-#results_file_path = output_directory + '/GAc_PBX_scr_results_194_80000.txt'
+#results_file_path = output_directory + '/HGAc_ini_results_38.txt'
+best_params = load_best_params(Path_Params)
+results_file_path = output_directory + '/GAc_ini_results_38_80000.txt'
 
 # Using best parameters to obtain solutions.
 n = len(Instances)
 results = []
-#for Instance, opt_value in zip(Instances, Opt_Instances):
 
 for i in range(11):
-        result, _ = GAc_Hybrid_end(100, 
+        result, _ = GAc_Hybrid(best_params["POP_SIZE"], 
                                     Instances[2], 
                                     len(Instances[2]),
                                     80000,
-                                    6,
-                                    80, 
-                                    10,
-                                    0.5,
-                                    20000)
+                                    best_params["T_SIZE"],
+                                    best_params["C_RATE"], 
+                                    best_params["M_RATE"],
+                                    best_params["ALPHA"]/100,
+                                    best_params["CALLS_GA"],
+                                    best_params["E_RATE"]/100)
         
         # Calcular el valor de la función objetivo para la solución obtenida
         #obj_value = ObjFun(result, Instances[1])

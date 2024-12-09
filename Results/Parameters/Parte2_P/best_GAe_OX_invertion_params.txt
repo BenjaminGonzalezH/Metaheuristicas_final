@@ -1,5 +1,5 @@
 {
-    "POP_SIZE": 10,
-    "C_RATE": 85,
-    "M_RATE": 5
+    "POP_SIZE": 5,
+    "C_RATE": 92,
+    "M_RATE": 3
 }

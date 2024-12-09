@@ -22,17 +22,17 @@ import time
 Path_Instances = "Instances/Parametrizacion"
 Path_OPT = "Optimals/Parametrizacion/Optimals.txt"
 output_directory = 'Results/Parametrization'
-best_GA_params_file = 'best_GAe_PBX_scramble_params.txt'
-trials_GA_file = 'trials_GAe_PBX_scr.csv'
+best_GA_params_file = 'best_GAc_PBX_scramble_params.txt'
+trials_GA_file = 'trials_GAc_PBX_scr.csv'
 
 ########## Own files ##########
 # Path from the workspace.
 sys.path.append("C:/Users/Benjamin Gonzalez/Desktop/Workspace/Metaheuristicas_final/Libraries")
 from ReadTSP import ReadTsp # type: ignore
 from ReadTSP import ReadTSP_optTour # type: ignore
-from GeneticAlgorithm_C9 import GAe_PMX_swap # type: ignore
-from GeneticAlgorithm_C9 import GAe_OX_invertion # type: ignore
-from GeneticAlgorithm_C9 import GAe_PBX_scramble # type: ignore
+from HybridGA import GAc_Hybrid # type: ignore
+from HybridGA import GAc_Hybrid_1 # type: ignore
+
 
 ########## Secundary functions ##########
 def Read_Content(filenames_Ins, filenames_Opt):
@@ -65,23 +65,28 @@ def Parametrization_GA(trial, Instances, Opt_Instances):
         every trial.
     """
     # Define parameter intervals using Optuna's suggest methods.
-    pop_size = trial.suggest_int('POP_SIZE', 5, 12)
+    pop_size = trial.suggest_int('POP_SIZE', 10, 150)
+    t_size = trial.suggest_int('T_SIZE', 2, 6)
     crossover_rate = trial.suggest_int('C_RATE', 70, 95)
-    mutation_rate = trial.suggest_int('M_RATE', 1, 5)
+    mutation_rate = trial.suggest_int('M_RATE', 3, 5)
+    alpha = trial.suggest_int('ALPHA', 40, 60)
+    callsGA = trial.suggest_int('CALLS_GA', 20000, 40000)
+    elitist = trial.suggest_int('E_RATE', 20, 40)
 
     # Initialize total normalized error.
     total_normalized_error = 0
     num_instances = len(Instances)
 
     for i in range(num_instances):
-        # Run Tabu Search with the parameters from Optuna
-        pop , result = GAe_PBX_scramble(pop_size, Instances[i], len(Instances[i]),
-                 80000, crossover_rate, mutation_rate)
+        # Run Tabu Search with the parameters from Optuna.
+        result, _ = GAc_Hybrid(pop_size, Instances[i], len(Instances[i]),
+                 80000, t_size, crossover_rate, mutation_rate, alpha/100, callsGA,
+                 elitist/100)
 
-        # Sum the normalized error
+        # Sum the normalized error.
         total_normalized_error += (result[1] - Opt_Instances[i])/Opt_Instances[i]
 
-    # Return the average normalized error across all instances
+    # Return the average normalized error across all instances.
     return total_normalized_error / num_instances
 
 def Parametrization_GA_capsule(Instances, Opt_Instances):
@@ -127,7 +132,6 @@ def save_GA_study_txt(study, output_dir, best_params_file, trials_file):
                 'params': trial.params
             })
 
-
 ########## Procedure ##########
 # Obtain TSP's instances.
 Content_Instances = os.listdir(Path_Instances)
@@ -149,4 +153,3 @@ study = optuna.create_study(
 study.optimize(Parametrization_GA_capsule(Instances, Opt_Instances), n_trials=11, n_jobs=-1)
 best_params = study.best_params
 print('Best parameters:', best_params)
-#save_GA_study_txt(study, output_directory ,best_GA_params_file, trials_GA_file)

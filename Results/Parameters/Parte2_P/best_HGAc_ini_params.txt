@@ -1,0 +1,9 @@
+{
+    "POP_SIZE": 33, 
+    "T_SIZE": 3,
+    "C_RATE": 89, 
+    "M_RATE": 4, 
+    "ALPHA": 59, 
+    "CALLS_GA": 22383,
+    "E_RATE": 22
+}

@@ -13,15 +13,15 @@ import json
         Counter of every time that
         the objective function is called.
 """
-Path_Instances = "Instances/Experimental"
-Path_Params = 'C:/Users/benja/OneDrive/Escritorio/WorkSpace/Metaheuristicas_final/Results/Parameters/Parte2_P/best_GAe_OX_invertion_params.txt'
-Path_OPT = "Optimals/Experimental/Optimals.txt"
-output_directory = 'C:/Users/benja/OneDrive/Escritorio/WorkSpace/Metaheuristicas_final/Results/Experimentals/Parte2'
+Path_Instances = "C:/Users/Benjamin Gonzalez/Desktop/WorkSpace/Metaheuristicas_final/Instances/Experimental"
+Path_Params = 'C:/Users/Benjamin Gonzalez/Desktop/WorkSpace/Metaheuristicas_final/Results/Parameters/Parte2_P/best_GAe_OX_invertion_params.txt'
+Path_OPT = "C:/Users/Benjamin Gonzalez/Desktop/WorkSpace/Metaheuristicas_final/Optimals/Experimental/Optimals.txt"
+output_directory = 'C:/Users/Benjamin Gonzalez/Desktop/WorkSpace/Metaheuristicas_final/Results/Experimentals/Parte2'
 
 
 ########## Own files ##########
 # Path from the workspace.
-sys.path.append("C:/Users/benja/OneDrive/Escritorio/WorkSpace/Metaheuristicas_final/Libraries")
+sys.path.append("C:/Users/Benjamin Gonzalez/Desktop/WorkSpace/Metaheuristicas_final/Libraries")
 from ReadTSP import ReadTsp # type: ignore
 from ReadTSP import ReadTSP_optTour # type: ignore
 from TabuSearch import ObjFun  # type: ignore
@@ -129,4 +129,4 @@ for i in range(11):
         print(f"Objective Value: {result[1]}, Error: {error}")
 
 # Escribir los resultados en un archivo
-write_results(results_file_path, results)
+#write_results(results_file_path, results)

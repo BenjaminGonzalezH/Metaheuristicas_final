@@ -14,15 +14,15 @@ import numpy as np
         Counter of every time that
         the objective function is called.
 """
-Path_Instances = "Instances/Experimental"
-Path_Params = 'C:/Users/benja/OneDrive/Escritorio/WorkSpace/Metaheuristicas_final/Results/Parameters/Parte2_P/best_GAe_PBX_scramble_params.txt'
-Path_OPT = "Optimals/Experimental/Optimals.txt"
+Path_Instances = "C:/Users/Benjamin Gonzalez/Desktop/Workspace/Metaheuristicas_final/Instances/Experimental"
+Path_Params = 'C:/Users/Benjamin Gonzalez/Desktop/Workspace/Metaheuristicas_final/Results/Parameters/Parte2_P/best_GAc_OX_invertion_params.txt'
+Path_OPT = "C:/Users/Benjamin Gonzalez/Desktop/Workspace/Metaheuristicas_final/Optimals/Experimental/Optimals.txt"
 output_directory = 'Results/Experimentals'
 
 
 ########## Own files ##########
 # Path from the workspace.
-sys.path.append("C:/Users/benja/OneDrive/Escritorio/WorkSpace/Metaheuristicas_final/Libraries")
+sys.path.append("C:/Users/Benjamin Gonzalez/Desktop/Workspace/Metaheuristicas_final/Libraries")
 from ReadTSP import ReadTsp # type: ignore
 from ReadTSP import ReadTSP_optTour # type: ignore
 from TabuSearch import ObjFun  # type: ignore
@@ -171,24 +171,25 @@ n = len(Instances)
 results = []
 #for Instance, opt_value in zip(Instances, Opt_Instances):
 
-for i in range(1):
-        result, Generations = GAe_OX_invertion(best_params['POP_SIZE'], 
-                                      Instances[0], 
-                                      len(Instances[0]),
+for i in range(11):
+        result, _ = GAc_OX_invertion(best_params['POP_SIZE'], 
+                                      Instances[1], 
+                                      len(Instances[1]),
                                       80000,
+                                      best_params['T_SIZE'],
                                       best_params['C_RATE'], 
                                       best_params['M_RATE'])
         
-        print("iteración número: {}".format(i+1))
+        """print("iteración número: {}".format(i+1))
         for j in range(200):
-            print(kendall_tau_statistics(result[j]))
+            print(kendall_tau_statistics(result[j]))"""
         # Calcular el valor de la función objetivo para la solución obtenida
         #obj_value = ObjFun(result, Instances[1])
 
         # Calcular el error respecto al valor óptimo
         #error = (obj_value - Opt_Instances[0]) / Opt_Instances[0]
         #error = (obj_value - Opt_Instances[1]) / Opt_Instances[1]
-        #error = (result[1] - Opt_Instances[2]) / Opt_Instances[2]
+        error = (ObjFun(result[0], Instances[1]) - Opt_Instances[1]) / Opt_Instances[1]
         
         # Guardar el resultado y el error
         #results.append((obj_value, error))
@@ -196,7 +197,7 @@ for i in range(1):
         
         # Imprimir el valor de la función objetivo para la solución obtenida.
         #print(f"Objective Value: {obj_value}, Error: {error}")
-        #print(f"Objective Value: {result[1]}, Error: {error}")
+        print(f"Objective Value: {ObjFun(result[0], Instances[1])}, Error: {error}")
 
 
 

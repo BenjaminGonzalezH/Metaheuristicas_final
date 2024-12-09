@@ -21,13 +21,13 @@ import time
 """
 Path_Instances = "Instances/Parametrizacion"
 Path_OPT = "Optimals/Parametrizacion/Optimals.txt"
-output_directory = 'Results/Parametrization'
+output_directory = 'Results/Parameter/Parte2_P'
 best_GA_params_file = 'best_GAc_PBX_scramble_params.txt'
 trials_GA_file = 'trials_GA_PBX_scr.csv'
 
 ########## Own files ##########
 # Path from the workspace.
-sys.path.append(os.path.join(os.path.dirname(__file__), 'Libraries'))
+sys.path.append("C:/Users/Benjamin Gonzalez/Desktop/Workspace/Metaheuristicas_final/Libraries")
 from ReadTSP import ReadTsp # type: ignore
 from ReadTSP import ReadTSP_optTour # type: ignore
 from GeneticAlgorithm_classic import GAc_PMX_swap # type: ignore
@@ -157,4 +157,4 @@ study = optuna.create_study(
 study.optimize(Parametrization_GA_capsule(Instances, Opt_Instances), n_trials=11, n_jobs=-1)
 best_params = study.best_params
 print('Best parameters:', best_params)
-save_GA_study_txt(study, output_directory ,best_GA_params_file, trials_GA_file)
+#save_GA_study_txt(study, output_directory ,best_GA_params_file, trials_GA_file)
