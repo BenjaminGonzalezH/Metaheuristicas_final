@@ -3,6 +3,7 @@ import numpy as np
 import sys
 import os
 import random
+import copy
 
 ########## Own files ##########
 # Path from the workspace.
@@ -115,6 +116,9 @@ def GAc_OX_invertion(Pop_size, DistanceMatrix, AmountNodes,
                 m_child2 = (m_child2, ObjFun(m_child2, DistanceMatrix))
                 calls += 2
 
+                if calls > MaxOfCalls:
+                    break
+
                 # Agregar los hijos solo si no están duplicados
                 if tuple(m_child1[0]) not in pop_eval_set:
                     childs.append(m_child1)
@@ -133,7 +137,7 @@ def GAc_OX_invertion(Pop_size, DistanceMatrix, AmountNodes,
         # Actualizar la mejor solución
         current_best = min(pop_eval, key=lambda x: x[1])
         if current_best[1] < Best[1]:
-            Best = current_best
+            Best = copy.deepcopy(current_best)
 
         # Registrar las generaciones
         Generations.append(pop_eval)

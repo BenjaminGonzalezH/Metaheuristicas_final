@@ -100,12 +100,12 @@ for i in range(11):
         result, _ = GAc_Hybrid(best_params["POP_SIZE"], 
                                     Instances[2], 
                                     len(Instances[2]),
-                                    80000,
+                                    210000,
                                     best_params["T_SIZE"],
                                     best_params["C_RATE"], 
                                     best_params["M_RATE"],
                                     best_params["ALPHA"]/100,
-                                    best_params["CALLS_GA"],
+                                    2*best_params["CALLS_GA"],
                                     best_params["E_RATE"]/100)
         
         # Calcular el valor de la función objetivo para la solución obtenida

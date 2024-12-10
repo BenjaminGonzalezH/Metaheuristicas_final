@@ -69,6 +69,9 @@ def GAc_Hybrid(Pop_size, DistanceMatrix, AmountNodes,
                 m_child2 = (m_child2, ObjFun(m_child2, DistanceMatrix))
                 calls += 2
 
+                if calls > MaxOfCalls:
+                    break
+
                 # Agregar los hijos solo si no están duplicados
                 if tuple(m_child1[0]) not in pop_eval_set:
                     childs.append(m_child1)
@@ -147,6 +150,9 @@ def GAc_Hybrid_1(Pop_size, DistanceMatrix, AmountNodes,
                 m_child2 = (m_child2, ObjFun(m_child2, DistanceMatrix))
                 calls += 2
 
+                if calls > MaxOfCalls:
+                    break
+                
                 # Agregar los hijos solo si no están duplicados
                 if tuple(m_child1[0]) not in pop_eval_set:
                     childs.append(m_child1)

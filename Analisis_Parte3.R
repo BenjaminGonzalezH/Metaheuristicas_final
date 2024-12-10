@@ -6,6 +6,57 @@ library(tidyr)
 ################ WorkSpaces
 setwd("C:/Users/Benjamin Gonzalez/Desktop/Workspace/Metaheuristicas_final/Results/Experimentals")
 
+
+Diversity_GA1 <- read.csv("Parte2_P/DiversityOXc.txt")
+Diversity_GA2 <- read.csv("Parte2_P/DiversityOXe.txt")
+Diversity_GA3 <- read.csv("Parte2_P/DiversityHGAc.txt")
+
+Diversity_GA1 <- Diversity_GA1 %>% mutate(x = 1:n(), Valor = mean, Metodo = "GAc")
+Diversity_GA2 <- Diversity_GA2 %>% mutate(x = 1:n(), Valor = mean, Metodo = "GAe")
+Diversity_GA3 <- Diversity_GA3 %>% mutate(x = 1:n(), Valor = mean, Metodo = "HGA")
+
+
+df_38 <- bind_rows(
+  Diversity_GA1,
+  Diversity_GA2,
+  Diversity_GA3
+)
+
+##############################
+# Unir todos los DataFrames en uno solo
+##############################
+df_diversity_filtered <- df_diversity %>% 
+  group_by(Metodo) %>% 
+  slice_head(n = 200) %>% 
+  ungroup()
+
+##############################
+# Graficar la diversidad para cada método
+##############################
+ggplot(df_diversity_filtered, aes(x = x, y = mean, color = Metodo)) +
+  geom_line(size = 1.2) + 
+  labs(
+    title = "Diversidad de diferentes métodos (primeras 200 generaciones)",
+    x = "Generaciones",
+    y = "Kendall tau Distance"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = "bottom"
+  )
+
+
+
+
+
+
+
+
+
+
+
+
 ################
 # Converge.
 ################
@@ -64,30 +115,23 @@ Caso_HGA_11 <- read.csv("HGAc_ini_results_38.txt")
 Caso_HGA_12 <- read.csv("HGAc_ini_results_76.txt")
 Caso_HGA_13 <- read.csv("HGAc_ini_results_194.txt")
 
-Caso_HGA_21 <- read.csv("HGAc1_ini_results_38.txt")
-Caso_HGA_22 <- read.csv("HGAc1_ini_results_76.txt")
-Caso_HGA_23 <- read.csv("HGAc1_ini_results_194.txt")
-
 
 df_38 <- bind_rows(
   data.frame(Caso = "GAe", Error = Caso_GA_21$V2),
   data.frame(Caso = "GAc", Error = Caso_GA_51$V2),
-  data.frame(Caso = "GAcGLS", Error = Caso_HGA_11$Error),
-  data.frame(Caso = "GAc2op", Error = Caso_HGA_21$Error),
+  data.frame(Caso = "GAcGLS", Error = Caso_HGA_11$Error)
 )
 
 df_76 <- bind_rows(
   data.frame(Caso = "GAe", Error = Caso_GA_22$V2),
   data.frame(Caso = "GAc", Error = Caso_GA_52$V2),
-  data.frame(Caso = "GAcGLS", Error = Caso_HGA_12$Error),
-  data.frame(Caso = "GAc2op", Error = Caso_HGA_22$Error),
+  data.frame(Caso = "GAcGLS", Error = Caso_HGA_12$Error)
 )
 
 df_194 <- bind_rows(
   data.frame(Caso = "GAe", Error = Caso_GA_23$V2),
   data.frame(Caso = "GAc", Error = Caso_GA_53$V2),
-  data.frame(Caso = "GAcGLS", Error = Caso_HGA_13$Error),
-  data.frame(Caso = "GAc2opt", Error = Caso_HGA_23$Error),
+  data.frame(Caso = "GAcGLS", Error = Caso_HGA_13$Error)
 )
 
 ggplot(df_38, aes(x = Caso, y = Error, fill = Caso)) +
@@ -106,7 +150,7 @@ ggplot(df_38, aes(x = Caso, y = Error, fill = Caso)) +
 ggplot(df_76, aes(x = Caso, y = Error, fill = Caso)) +
   geom_boxplot(alpha = 0.7) + 
   labs(
-    title = "Boxplots de Error normalizado pr76 (80.000 llamadas)",
+    title = "Boxplots de Error normalizado pr76 (160.000 llamadas)",
     x = "Caso",
     y = "Error"
   ) +
@@ -118,7 +162,7 @@ ggplot(df_76, aes(x = Caso, y = Error, fill = Caso)) +
 ggplot(df_194, aes(x = Caso, y = Error, fill = Caso)) +
   geom_boxplot(alpha = 0.7) + 
   labs(
-    title = "Boxplots de Error normalizado qa194 (80.000 llamadas)",
+    title = "Boxplots de Error normalizado qa194 (210.000 llamadas)",
     x = "Caso",
     y = "Error"
   ) +
@@ -135,16 +179,12 @@ resultado_shapiro <- shapiro.test(Caso_GA_51$V2)
 print(resultado_shapiro)
 resultado_shapiro <- shapiro.test(Caso_HGA_11$Error)
 print(resultado_shapiro)
-resultado_shapiro <- shapiro.test(Caso_HGA_21$Error)
-print(resultado_shapiro)
 
 resultado_shapiro <- shapiro.test(Caso_GA_22$V2)
 print(resultado_shapiro)
 resultado_shapiro <- shapiro.test(Caso_GA_52$V2)
 print(resultado_shapiro)
 resultado_shapiro <- shapiro.test(Caso_HGA_12$Error)
-print(resultado_shapiro)
-resultado_shapiro <- shapiro.test(Caso_HGA_22$Error)
 print(resultado_shapiro)
 
 resultado_shapiro <- shapiro.test(Caso_GA_23$V2)
@@ -153,11 +193,22 @@ resultado_shapiro <- shapiro.test(Caso_GA_53$V2)
 print(resultado_shapiro)
 resultado_shapiro <- shapiro.test(Caso_HGA_13$Error)
 print(resultado_shapiro)
-resultado_shapiro <- shapiro.test(Caso_HGA_23$Error)
-print(resultado_shapiro)
 
-anova_resultado <- aov(Error ~ Caso, data = df_38)
-summary(anova_resultado)
+bloques <- rep(1:11, each = 3) # Crear 11 bloques, cada uno con 3 observaciones
+categorias <- rep(c("GAc", "GAcGLS", "GAe"), times = 11) # Repetir las categorías
+
+# Valores intercalados (1, 2, 3)
+valores <- c(1, 2, 3) # Patrones para intercalar
+valores_intercalados <- rep(valores, length.out = length(bloques)) # Ajustar longitud
+
+# Crear el dataframe
+df_intercalado <- data.frame(
+  Bloque = bloques,
+  Caso = categorias,
+  Error = valores_intercalados
+)
+resultado <- friedman.test(Error ~ Caso | Bloque, data = df_intercalado)
+print(resultado)
 
 anova_resultado <- aov(Error ~ Caso, data = df_76)
 summary(anova_resultado)
@@ -186,11 +237,24 @@ ggplot(tukey_df, aes(x = comparacion, y = `p adj`, fill = `p adj` < 0.05)) +
   geom_hline(yintercept = 0.05, linetype = "dashed", color = "red", linewidth = 1) + 
   scale_fill_manual(values = c("TRUE" = "red", "FALSE" = "steelblue")) +
   labs(
-    title = "P-valores ajustados de la prueba de Tukey HSD pr76",
+    title = "P-valores ajustados de la prueba de Tukey HSD qa194",
     x = "Comparación de métodos",
     y = "P-valor ajustado"
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+wilcoxon_gac_vs_gacgls <- pairwise.wilcox.test(df_intercalado$Error, df_intercalado$Caso,
+                                               p.adjust.method = "bonferroni")
+print(wilcoxon_gac_vs_gacgls)
+
+# Comparar GAc con GAe
+wilcoxon_gac_vs_gae <- pairwise.wilcox.test(df_intercalado$Error, df_intercalado$Caso,
+                                            p.adjust.method = "bonferroni")
+print(wilcoxon_gac_vs_gae)
+
+# Comparar GAcGLS con GAe
+wilcoxon_gacgls_vs_gae <- pairwise.wilcox.test(df_intercalado$Error, df_intercalado$Caso,
+                                               p.adjust.method = "bonferroni")
+print(wilcoxon_gacgls_vs_gae)
 

@@ -15,7 +15,7 @@ import numpy as np
         the objective function is called.
 """
 Path_Instances = "C:/Users/Benjamin Gonzalez/Desktop/Workspace/Metaheuristicas_final/Instances/Experimental"
-Path_Params = 'C:/Users/Benjamin Gonzalez/Desktop/Workspace/Metaheuristicas_final/Results/Parameters/Parte2_P/best_GAc_OX_invertion_params.txt'
+Path_Params = 'C:/Users/Benjamin Gonzalez/Desktop/Workspace/Metaheuristicas_final/Results/Parameters/Parte2_P/best_HGAc_ini_params.txt'
 Path_OPT = "C:/Users/Benjamin Gonzalez/Desktop/Workspace/Metaheuristicas_final/Optimals/Experimental/Optimals.txt"
 output_directory = 'Results/Experimentals'
 
@@ -33,6 +33,7 @@ from GeneticAlgorithm_classic import GAc_PBX_scramble # type: ignore
 from GeneticAlgorithm_C9 import GAe_PMX_swap # type: ignore
 from GeneticAlgorithm_C9 import GAe_OX_invertion # type: ignore
 from GeneticAlgorithm_C9 import GAe_PBX_scramble # type: ignore
+from HybridGA import GAc_Hybrid # type: ignore
 
 ########## Secundary functions ##########
 
@@ -133,7 +134,7 @@ def kendall_tau_statistics(permutations):
     # Comparar cada par de permutaciones
     for i in range(n):
         for j in range(i + 1, n):
-            dist = kendall_tau_distance(permutations[i], permutations[j])
+            dist = kendall_tau_distance(permutations[i][0], permutations[j][0])
             distances.append(dist)
     
     # Calcular media, mediana y desviación estándar
@@ -171,25 +172,28 @@ n = len(Instances)
 results = []
 #for Instance, opt_value in zip(Instances, Opt_Instances):
 
-for i in range(11):
-        result, _ = GAc_OX_invertion(best_params['POP_SIZE'], 
-                                      Instances[1], 
-                                      len(Instances[1]),
+for i in range(1):
+        _, result = GAc_Hybrid(best_params['POP_SIZE'], 
+                                      Instances[0], 
+                                      len(Instances[0]),
                                       80000,
-                                      best_params['T_SIZE'],
-                                      best_params['C_RATE'], 
-                                      best_params['M_RATE'])
+                                      best_params["T_SIZE"],
+                                      best_params["C_RATE"], 
+                                      best_params["M_RATE"],
+                                      best_params["ALPHA"]/100,
+                                      best_params["CALLS_GA"],
+                                      best_params["E_RATE"]/100)
         
-        """print("iteración número: {}".format(i+1))
+        print("iteración número: {}".format(i+1))
         for j in range(200):
-            print(kendall_tau_statistics(result[j]))"""
+            print(kendall_tau_statistics(result[j]))
         # Calcular el valor de la función objetivo para la solución obtenida
         #obj_value = ObjFun(result, Instances[1])
 
         # Calcular el error respecto al valor óptimo
         #error = (obj_value - Opt_Instances[0]) / Opt_Instances[0]
         #error = (obj_value - Opt_Instances[1]) / Opt_Instances[1]
-        error = (ObjFun(result[0], Instances[1]) - Opt_Instances[1]) / Opt_Instances[1]
+        #error = (ObjFun(result[0], Instances[1]) - Opt_Instances[1]) / Opt_Instances[1]
         
         # Guardar el resultado y el error
         #results.append((obj_value, error))
@@ -197,7 +201,7 @@ for i in range(11):
         
         # Imprimir el valor de la función objetivo para la solución obtenida.
         #print(f"Objective Value: {obj_value}, Error: {error}")
-        print(f"Objective Value: {ObjFun(result[0], Instances[1])}, Error: {error}")
+        #print(f"Objective Value: {ObjFun(result[0], Instances[1])}, Error: {error}")
 
 
 

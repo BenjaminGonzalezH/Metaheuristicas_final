@@ -105,12 +105,12 @@ results = []
 #for Instance, opt_value in zip(Instances, Opt_Instances):
 
 for i in range(11):
-        _, result = GAe_OX_invertion(best_params['POP_SIZE'], 
+        _, result = GAe_OX_invertion(best_params["POP_SIZE"], 
                                       Instances[2], 
                                       len(Instances[2]),
-                                      80000,
-                                      best_params['C_RATE'], 
-                                      best_params['M_RATE'])
+                                      210000,
+                                      best_params["C_RATE"], 
+                                      best_params["M_RATE"])
         
         # Calcular el valor de la función objetivo para la solución obtenida
         #obj_value = ObjFun(result, Instances[1])
