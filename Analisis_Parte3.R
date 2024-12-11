@@ -16,7 +16,7 @@ Diversity_GA2 <- Diversity_GA2 %>% mutate(x = 1:n(), Valor = mean, Metodo = "GAe
 Diversity_GA3 <- Diversity_GA3 %>% mutate(x = 1:n(), Valor = mean, Metodo = "HGA")
 
 
-df_38 <- bind_rows(
+df_diversity <- bind_rows(
   Diversity_GA1,
   Diversity_GA2,
   Diversity_GA3
@@ -111,9 +111,9 @@ Caso_GA_51 <- read.csv("Parte2_P/GAc_OX_inv_results_38_80000.txt", header = FALS
 Caso_GA_52 <- read.csv("Parte2_P/GAc_OX_inv_results_76_80000.txt", header = FALSE)
 Caso_GA_53 <- read.csv("Parte2_P/GAc_OX_inv_results_194_80000.txt", header = FALSE)
 
-Caso_HGA_11 <- read.csv("HGAc_ini_results_38.txt")
-Caso_HGA_12 <- read.csv("HGAc_ini_results_76.txt")
-Caso_HGA_13 <- read.csv("HGAc_ini_results_194.txt")
+Caso_HGA_11 <- read.csv("HGAc1_ini_results_38.txt")
+Caso_HGA_12 <- read.csv("HGAc1_ini_results_76.txt")
+Caso_HGA_13 <- read.csv("HGAc1_ini_results_194.txt")
 
 
 df_38 <- bind_rows(
@@ -194,21 +194,8 @@ print(resultado_shapiro)
 resultado_shapiro <- shapiro.test(Caso_HGA_13$Error)
 print(resultado_shapiro)
 
-bloques <- rep(1:11, each = 3) # Crear 11 bloques, cada uno con 3 observaciones
-categorias <- rep(c("GAc", "GAcGLS", "GAe"), times = 11) # Repetir las categorías
-
-# Valores intercalados (1, 2, 3)
-valores <- c(1, 2, 3) # Patrones para intercalar
-valores_intercalados <- rep(valores, length.out = length(bloques)) # Ajustar longitud
-
-# Crear el dataframe
-df_intercalado <- data.frame(
-  Bloque = bloques,
-  Caso = categorias,
-  Error = valores_intercalados
-)
-resultado <- friedman.test(Error ~ Caso | Bloque, data = df_intercalado)
-print(resultado)
+anova_resultado <- aov(Error ~ Caso, data = df_38)
+summary(anova_resultado)
 
 anova_resultado <- aov(Error ~ Caso, data = df_76)
 summary(anova_resultado)
